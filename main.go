@@ -63,7 +63,6 @@ func startMPV(albumPath string) {
 func completeArtists(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	musicDir := filepath.Join(os.Getenv("HOME"), "Músicas")
 	var results []string
-	// os.WriteFile("/tmp/debug.txt", []byte("executando autocomplete artista\n"), 0644)
 
 	filepath.Walk(musicDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -82,13 +81,12 @@ func completeArtists(cmd *cobra.Command, args []string, toComplete string) ([]st
 func completeAudioFiles(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	album := strings.Join(args, " ")
 	album = strings.TrimSpace(album)
-	// Trate o caso onde `toComplete` está sendo digitado no --music, então ignore
 	if strings.HasPrefix(toComplete, "-") {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 	musicDir := filepath.Join(os.Getenv("HOME"), "Músicas", album, AlbumName)
-	debug := fmt.Sprintf("ARGS: %q\nTO_COMPLETE: %q\nPATH: %q\n", args, toComplete, musicDir)
-	os.WriteFile("/tmp/debug.txt", []byte(debug), 0644)
+	// debug := fmt.Sprintf("ARGS: %q\nTO_COMPLETE: %q\nPATH: %q\n", args, toComplete, musicDir)
+	// os.WriteFile("/tmp/debug.txt", []byte(debug), 0644)
 
 	var results []string
 
@@ -107,13 +105,11 @@ func completeAudioFiles(cmd *cobra.Command, args []string, toComplete string) ([
 func completeAlbunsFolder(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
 	artista := strings.Join(args, " ")
 	artista = strings.TrimSpace(artista)
-	// Trate o caso onde `toComplete` está sendo digitado no --music, então ignore
 	if strings.HasPrefix(toComplete, "-") {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
 	musicDir := filepath.Join(os.Getenv("HOME"), "Músicas", artista)
 	var results []string
-	// os.WriteFile("/tmp/debug.txt", []byte("executando autocomplete artista\n"), 0644)
 	filepath.Walk(musicDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return nil
@@ -131,7 +127,7 @@ func completeAlbunsFolder(cmd *cobra.Command, args []string, toComplete string) 
 // Comandos
 var rootCmd = &cobra.Command{
 	Use:   "bard",
-	Short: "O seu bardo musical no terminal",
+	Short: "O bardo musical no terminal",
 	Long:  "Um utilitário para tocar música usando o MPV com controle interativo via IPC.",
 }
 
@@ -142,8 +138,6 @@ var playCmd = &cobra.Command{
 	ValidArgsFunction: completeArtists,
 	Run: func(cmd *cobra.Command, args []string) {
 		album := args[0]
-		os.WriteFile("/tmp/debug.txt", []byte("executando funcao arquivo "+args[0]+"\n"), 0644)
-
 		path := filepath.Join(os.Getenv("HOME"), "Músicas", album)
 		if AlbumName != "" {
 			path += "/" + AlbumName
