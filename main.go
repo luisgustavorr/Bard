@@ -48,7 +48,7 @@ func startMPV(albumPath string) {
 
 	var files []string
 	for _, v := range rawFilesName {
-		if !v.IsDir() && (strings.HasSuffix(v.Name(), ".mp3") || strings.HasSuffix(v.Name(), ".flac")) {
+		if !v.IsDir() && (strings.HasSuffix(v.Name(), ".mp3") || strings.HasSuffix(v.Name(), ".flac") || strings.HasSuffix(v.Name(), ".wav")) {
 			files = append(files, filepath.Join(albumPath, v.Name()))
 		}
 	}
@@ -79,14 +79,14 @@ func completeArtists(cmd *cobra.Command, args []string, toComplete string) ([]st
 }
 
 func completeAudioFiles(cmd *cobra.Command, args []string, toComplete string) ([]string, cobra.ShellCompDirective) {
-	album := strings.Join(args, " ")
-	album = strings.TrimSpace(album)
+	artist := strings.Join(args, " ")
+	artist = strings.TrimSpace(artist)
 	if strings.HasPrefix(toComplete, "-") {
 		return nil, cobra.ShellCompDirectiveNoFileComp
 	}
-	musicDir := filepath.Join(os.Getenv("HOME"), "Músicas", album, AlbumName)
-	// debug := fmt.Sprintf("ARGS: %q\nTO_COMPLETE: %q\nPATH: %q\n", args, toComplete, musicDir)
-	// os.WriteFile("/tmp/debug.txt", []byte(debug), 0644)
+	musicDir := filepath.Join(os.Getenv("HOME"), "Músicas", artist, AlbumName)
+	debug := fmt.Sprintf("ARGS: %q\nTO_COMPLETE: %q\nPATH: %q\n", args, toComplete, musicDir)
+	os.WriteFile("/tmp/debug.txt", []byte(debug), 0644)
 
 	var results []string
 
@@ -96,7 +96,7 @@ func completeAudioFiles(cmd *cobra.Command, args []string, toComplete string) ([
 	}
 
 	for _, entry := range dirEntries {
-		if !entry.IsDir() && (strings.HasSuffix(entry.Name(), ".mp3") || strings.HasSuffix(entry.Name(), ".flac")) {
+		if !entry.IsDir() && (strings.HasSuffix(entry.Name(), ".mp3") || strings.HasSuffix(entry.Name(), ".flac") || strings.HasSuffix(entry.Name(), ".wav")) {
 			results = append(results, entry.Name())
 		}
 	}
@@ -132,7 +132,7 @@ var rootCmd = &cobra.Command{
 }
 
 var playCmd = &cobra.Command{
-	Use:               "play [artista/álbum]",
+	Use:               "play [artista]",
 	Short:             "Toca todas as músicas de uma pasta",
 	Args:              cobra.ExactArgs(1),
 	ValidArgsFunction: completeArtists,
